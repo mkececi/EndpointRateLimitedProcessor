@@ -9,5 +9,6 @@
         /// Endpoint bazlı rate limit uygulanarak toplu işlem gerçekleştirir
         /// </summary>
         Task ProcessAsync<T>(string endpoint, IEnumerable<T> items, Func<T, Task> action);
+        Task ProcessAsync(string endpoint, Func<Task> action);
     }
 }

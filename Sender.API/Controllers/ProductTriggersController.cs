@@ -22,7 +22,7 @@ namespace Sender.API.Controllers
             for (int i = 1; i <= productCount; i++)
             {
                 var product = new Product { Id = i, Name = $"Product {i}" };
-                await _productService.AddProductsAsync(new List<Product>() { product }); // Tek tek çağırıyoruz
+                await _productService.AddProductsAsync(product); // Tek tek çağırıyoruz
             }
 
             return Ok();

@@ -66,5 +66,28 @@
             // Tüm görevlerin tamamlanmasını bekle
             await Task.WhenAll(tasks);
         }
+
+        public async Task ProcessAsync(
+            string endpoint,
+            Func<Task> action)
+        {
+            // Endpoint için rate limiter var mı kontrol et
+            if (!_rateLimiters.TryGetValue(endpoint, out var rateLimiter))
+            {
+                throw new InvalidOperationException($"Rate limit for endpoint '{endpoint}' is not configured.");
+            }
+
+            await rateLimiter.WaitAsync();
+            try
+            {
+                // Öğe üzerinde eylemi gerçekleştir
+                await action();
+            }
+            finally
+            {
+                // İşlem tamamlandığını log et
+                Console.WriteLine($"Processed item: {DateTime.Now}");
+            }
+        }
     }
 }

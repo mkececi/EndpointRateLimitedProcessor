@@ -50,5 +50,39 @@ namespace Sender.API.ProductService
                 }
             });
         }
+
+        public async Task AddProductsAsync(Product product)
+        {
+            await _rateLimitedProcessor.ProcessAsync("/products/add", async () =>
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        string url = "https://localhost:7139/api/Products";
+
+                        string jsonContent = JsonSerializer.Serialize(product);
+
+                        var requestBody = new StringContent(jsonContent, Encoding.UTF8, "application/json");
+
+                        HttpResponseMessage response = await client.PostAsync(url, requestBody);
+
+                        if (response.IsSuccessStatusCode)
+                        {
+                            string responseContent = await response.Content.ReadAsStringAsync();
+                            Console.WriteLine($"Success! Response: {responseContent}");
+                        }
+                        else
+                        {
+                            Console.WriteLine($"Failed. Status Code: {response.StatusCode}, Reason: {response.ReasonPhrase}");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine($"Exception occurred: {ex.Message}");
+                    }
+                }
+            });
+        }
     }
 }
